@@ -394,6 +394,8 @@ describe("matchersUtil", function() {
       var tester = function(a, b) { return true; },
         matchersUtil = new jasmineUnderTest.MatchersUtil();
 
+      spyOn(jasmineUnderTest.getEnv(), 'deprecated'); // suppress warning
+
       expect(matchersUtil.equals(1, 2, [tester])).toBe(true);
     });
 
@@ -415,6 +417,7 @@ describe("matchersUtil", function() {
 
       it("passes for two empty Objects", function () {
         var matchersUtil = new jasmineUnderTest.MatchersUtil();
+        spyOn(jasmineUnderTest.getEnv(), 'deprecated'); // suppress warning
         expect(matchersUtil.equals({}, {}, [tester])).toBe(true);
       });
     });
@@ -433,6 +436,8 @@ describe("matchersUtil", function() {
       var tester = function(a, b) { return false; },
         matchersUtil = new jasmineUnderTest.MatchersUtil();
 
+      spyOn(jasmineUnderTest.getEnv(), 'deprecated'); // suppress warning
+
       expect(matchersUtil.equals(1, 1, [tester])).toBe(false);
     });
 
@@ -448,6 +453,8 @@ describe("matchersUtil", function() {
       var asymmetricTester = { asymmetricMatch: function(other) { return true; } },
         symmetricTester = function(a, b) { return false; },
         matchersUtil = new jasmineUnderTest.MatchersUtil();
+
+      spyOn(jasmineUnderTest.getEnv(), 'deprecated'); // suppress warning
 
       expect(matchersUtil.equals(asymmetricTester, true, [symmetricTester])).toBe(true);
       expect(matchersUtil.equals(true, asymmetricTester, [symmetricTester])).toBe(true);
@@ -470,6 +477,7 @@ describe("matchersUtil", function() {
             matchersUtil = new jasmineUnderTest.MatchersUtil(),
             shim;
 
+          spyOn(jasmineUnderTest.getEnv(), 'deprecated'); // suppress warning
           matchersUtil.equals(true, asymmetricTester, [symmetricTester]);
           shim = asymmetricTester.asymmetricMatch.calls.argsFor(0)[1];
           expect(shim).toEqual(jasmine.any(jasmineUnderTest.MatchersUtil));
@@ -485,6 +493,7 @@ describe("matchersUtil", function() {
             matchersUtil = new jasmineUnderTest.MatchersUtil({customTesters: [symmetricTester], pp: function() {}}),
             shim;
 
+          spyOn(jasmineUnderTest.getEnv(), 'deprecated'); // suppress warning
           matchersUtil.equals(true, asymmetricTester);
           shim = asymmetricTester.asymmetricMatch.calls.argsFor(0)[1];
           expect(shim).toEqual(jasmine.any(jasmineUnderTest.MatchersUtil));
@@ -725,11 +734,34 @@ describe("matchersUtil", function() {
       });
     });
 
+    it('logs a deprecation warning when custom equality testers are passed', function() {
+      var matchersUtil = new jasmineUnderTest.MatchersUtil(),
+        deprecated = spyOn(jasmineUnderTest.getEnv(), 'deprecated');
+
+      matchersUtil.equals(0, 0, []);
+
+      expect(deprecated).toHaveBeenCalledWith('Passing custom equality testers ' +
+        'to MatchersUtil#equals is deprecated. ' +
+        'See <https://jasmine.github.io/tutorials/upgrading_to_3.6> for details.');
+    });
+
+    it('logs a deprecation warning when a diffBuilder is provided as the fourth argument', function() {
+      var matchersUtil = new jasmineUnderTest.MatchersUtil(),
+        deprecated = spyOn(jasmineUnderTest.getEnv(), 'deprecated');
+
+      matchersUtil.equals(0, 0, null, new jasmineUnderTest.NullDiffBuilder());
+
+      expect(deprecated).toHaveBeenCalledWith('Diff builder should be passed as the ' +
+        'third argument to MatchersUtil#equals, not the fourth. ' +
+        'See <https://jasmine.github.io/tutorials/upgrading_to_3.6> for details.');
+    });
+
     it('uses a diffBuilder if one is provided as the fourth argument', function() {
       // TODO: remove this in the next major release.
       var diffBuilder = new jasmineUnderTest.DiffBuilder(),
         matchersUtil = new jasmineUnderTest.MatchersUtil();
 
+      spyOn(jasmineUnderTest.getEnv(), 'deprecated'); // suppress warning
       spyOn(diffBuilder, 'recordMismatch');
       spyOn(diffBuilder, 'withPath').and.callThrough();
 
@@ -783,9 +815,14 @@ describe("matchersUtil", function() {
     it("uses custom equality testers if passed to contains and actual is an Array", function() {
       // TODO: remove this in the next major release.
       var customTester = function(a, b) {return true;},
-        matchersUtil = new jasmineUnderTest.MatchersUtil();
+        matchersUtil = new jasmineUnderTest.MatchersUtil(),
+        deprecated = spyOn(jasmineUnderTest.getEnv(), 'deprecated');
 
         expect(matchersUtil.contains([1, 2], 3, [customTester])).toBe(true);
+
+      expect(deprecated).toHaveBeenCalledWith('Passing custom equality testers ' +
+        'to MatchersUtil#contains is deprecated. ' +
+        'See <https://jasmine.github.io/tutorials/upgrading_to_3.6> for details.');
     });
 
     it("uses custom equality testers if passed to the constructor and actual is an Array", function() {

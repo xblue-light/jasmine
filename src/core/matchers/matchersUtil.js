@@ -1,6 +1,4 @@
 getJasmineRequireObj().MatchersUtil = function(j$) {
-  // TODO: convert all uses of j$.pp to use the injected pp
-
   function MatchersUtil(options) {
     options = options || {};
     this.customTesters_ = options.customTesters || [];
@@ -8,6 +6,12 @@ getJasmineRequireObj().MatchersUtil = function(j$) {
   };
 
   MatchersUtil.prototype.contains = function(haystack, needle, customTesters) {
+    if (customTesters) {
+      j$.getEnv().deprecated('Passing custom equality testers to ' +
+        'MatchersUtil#contains is deprecated. See ' +
+        '<https://jasmine.github.io/tutorials/upgrading_to_3.6> for details.');
+    }
+
     if (j$.isSet(haystack)) {
       return haystack.has(needle);
     }
@@ -89,6 +93,18 @@ getJasmineRequireObj().MatchersUtil = function(j$) {
     if (isDiffBuilder(customTestersOrDiffBuilder)) {
       diffBuilder = customTestersOrDiffBuilder;
     } else {
+      if (customTestersOrDiffBuilder) {
+        j$.getEnv().deprecated('Passing custom equality testers to ' +
+          'MatchersUtil#equals is deprecated. See ' +
+          '<https://jasmine.github.io/tutorials/upgrading_to_3.6> for details.');
+      }
+
+      if (diffBuilderOrNothing) {
+        j$.getEnv().deprecated('Diff builder should be passed as the third argument ' +
+          'to MatchersUtil#equals, not the fourth. ' +
+          'See <https://jasmine.github.io/tutorials/upgrading_to_3.6> for details.');
+      }
+
       customTesters = customTestersOrDiffBuilder;
       diffBuilder = diffBuilderOrNothing;
     }
