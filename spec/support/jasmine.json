@@ -13,7 +13,8 @@
     "helpers/domHelpers.js",
     "helpers/integrationMatchers.js",
     "helpers/promises.js",
-    "helpers/nodeDefineJasmineUnderTest.js"
+    "helpers/nodeDefineJasmineUnderTest.js",
+    "helpers/resetEnv.js"
   ],
   "random": true
 }
