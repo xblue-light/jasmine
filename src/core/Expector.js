@@ -18,7 +18,15 @@ getJasmineRequireObj().Expector = function(j$) {
 
     this.args.unshift(this.actual);
 
-    var matcher = matcherFactory(this.util, this.customEqualityTesters);
+    // TODO: Remove support for passing customEqualityTesters in the next major release.
+    var matcher;
+
+    if (matcherFactory.length >= 2) {
+      matcher = matcherFactory(this.util, this.customEqualityTesters);
+    } else {
+      matcher = matcherFactory(this.util);
+    }
+
     var comparisonFunc = this.filters.selectComparisonFunc(matcher);
     return comparisonFunc || matcher.compare;
   };

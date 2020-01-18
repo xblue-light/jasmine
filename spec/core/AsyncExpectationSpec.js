@@ -264,23 +264,18 @@ describe('AsyncExpectation', function() {
         util = {
           buildFailureMessage: jasmine.createSpy('buildFailureMessage')
         },
-        customEqualityTesters = ['a'],
         addExpectationResult = jasmine.createSpy('addExpectationResult'),
         expectation;
 
       expectation = jasmineUnderTest.Expectation.asyncFactory({
         util: util,
         customAsyncMatchers: matchers,
-        customEqualityTesters: customEqualityTesters,
         actual: 'an actual',
         addExpectationResult: addExpectationResult
       });
 
       return expectation.toFoo('hello').then(function() {
-        expect(matcherFactory).toHaveBeenCalledWith(
-          util,
-          customEqualityTesters
-        );
+        expect(matcherFactory).toHaveBeenCalledWith(util);
       });
     });
 
